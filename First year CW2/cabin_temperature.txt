@@ -1,0 +1,39 @@
+Data logging initiated - 5/3/2024
+Location - Nottingham
+Minute 0
+Temperature -21.16°C
+
+Minute 1
+Temperature -50.00°C
+
+Minute 2
+Temperature -50.00°C
+
+Minute 3
+Temperature -38.76°C
+
+Minute 4
+Temperature -17.25°C
+
+Minute 5
+Temperature -50.00°C
+
+Minute 6
+Temperature -6.01°C
+
+Minute 7
+Temperature -50.00°C
+
+Minute 8
+Temperature -50.00°C
+
+Minute 9
+Temperature -11.39°C
+
+Minute 10
+Temperature -50.00°C
+
+Max temp -1.12°C
+Min temp -50.00°C
+Average temp -35.68°C
+Data logging terminated

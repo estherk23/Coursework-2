@@ -1,0 +1,124 @@
+
+%% Preliminary task
+
+if exist('a', 'var') && isa(a, 'arduino')
+    clear a
+    disp('Existing Arduino connection cleared.');
+end
+
+
+% Connect to Arduino Uno on COM3
+    a = arduino("COM3", "Uno");
+    disp('Connection Successful.');
+
+    % Turn on the LED lamp
+    writeDigitalPin(a, 'D12', 1); % Set digital pin 12 to HIGH
+    disp('Digital Pin 12 set to HIGH.');
+
+% Blinking loop
+for i = 1:10  % Loop to blink the LED 10 times
+    writeDigitalPin(a,"D12", 1); % Turn LED on
+    pause(0.5);                 % Wait for 0.5 seconds
+    writeDigitalPin(a, "D12", 0); % Turn LED off
+    pause(0.5);                 % Wait for 0.5 seconds
+end
+
+%% Task 1
+
+if exist('a', 'var') && isa(a, 'arduino')
+    clear a
+    disp('Existing Arduino connection cleared.');
+end
+
+
+% Connect to Arduino Uno on COM3
+    a = arduino("COM3", "Uno");
+    disp('Connection Successful.');
+
+% Setup for data collection
+duration = 600; % Time in seconds for data collection (10 minutes)
+temperatures = zeros(1, duration + 1); % Array to hold temperature data
+TC = 0.01; % Temperature change per volt
+V0 = 0.5; % Voltage at 0 degrees Celsius
+
+% Collect data from sensor every second
+for i = 1:length(temperatures)
+    voltage = readVoltage(a, 'A2'); % Read voltage from sensor on pin A2
+    temperatures(i) = (voltage - V0) / TC; % Convert voltage to temperature
+    pause(1); % Wait for 1 second before next reading
+end
+
+% Calculate statistical values
+minTemp = min(temperatures); % Lowest temperature
+maxTemp = max(temperatures); % Highest temperature
+avgTemp = mean(temperatures); % Average temperature
+
+% Plotting the temperature data
+figure; % Open a new graph window
+plot(0:duration, temperatures, '-o'); % Plot temperatures with markers
+xlabel('Time (seconds)'); % Label x-axis as time
+ylabel('Temperature (°C)'); % Label y-axis as temperature
+title('Temperature vs Time'); % Title of the graph
+grid on; % Turn on grid lines
+
+% Displaying formatted data in the Command Window
+disp('Data logging initiated - 5/3/2024');
+disp('Location - Nottingham');
+for i = 0:10
+    fprintf('Minute %d\nTemperature %.2f°C\n\n', i, temperatures(i * 60 + 1));
+end
+fprintf('Max temp %.2f°C\nMin temp %.2f°C\nAverage temp %.2f°C\n', maxTemp, minTemp, avgTemp);
+disp('Data logging terminated');
+
+% Writing formatted data to a file
+fid = fopen('cabin_temperature.txt', 'w'); % Open file for writing
+fprintf(fid, 'Data logging initiated - 5/3/2024\n');
+fprintf(fid, 'Location - Nottingham\n');
+for i = 0:10
+    fprintf(fid, 'Minute %d\nTemperature %.2f°C\n\n', i, temperatures(i * 60 + 1));
+end
+fprintf(fid, 'Max temp %.2f°C\nMin temp %.2f°C\nAverage temp %.2f°C\n', maxTemp, minTemp, avgTemp);
+fprintf(fid, 'Data logging terminated\n');
+fclose(fid); % Close the file
+
+% Reading back from the file to check contents
+fid = fopen('cabin_temperature.txt', 'r'); % Reopen file to read
+fileContents = fread(fid, '*char')'; % Read all characters from the file
+fclose(fid); % Close the file
+disp(fileContents); % Display the contents of the file
+
+%% Task 2
+
+% arduino set up 
+if exist('a', 'var') && isa(a, 'arduino')
+    clear a
+    disp('Existing Arduino connection cleared.');
+end
+
+ a = arduino("COM3", "Uno");
+
+
+% temperature thresholds and LED blink intervals
+tempLowThreshold = 18;   % Lower temperature threshold in °C
+tempHighThreshold = 24;  % Upper temperature threshold in °C
+blinkIntervalLow = 0.5;  % Blink interval for yellow LED in seconds
+blinkIntervalHigh = 0.25;  % Blink interval for red LED in seconds
+
+%  temperature monitoring function
+temp_monitor(a, tempLowThreshold, tempHighThreshold, blinkIntervalLow, blinkIntervalHigh);
+
+% TEMP_MONITOR Monitors and displays temperature continuously and controls LEDs based on temperature ranges.
+%
+% Usage:
+%   temp_monitor(a, tempLowThreshold, tempHighThreshold, blinkIntervalLow, blinkIntervalHigh)
+%
+% Inputs:
+%   a - Arduino connected to MATLAB.
+%   tempLowThreshold - Lower threshold of temperature for yellow LED blinking.
+%   tempHighThreshold - Upper threshold of temperature for red LED blinking.
+%   blinkIntervalLow - Blinking interval for yellow LED.
+%   blinkIntervalHigh - Blinking interval for red LED.
+%
+% This function continually reads the temperature from a sensor connected
+% to an arduino, and updates a live plot, and controls the state of three LEDs (green, yellow, red) depending
+% on whether the temperature is within, below, or above the specified data thresholds.
